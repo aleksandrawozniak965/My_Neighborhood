@@ -1,0 +1,37 @@
+@import "colors";
+@import "fonts";
+
+.mainpage_container {
+  background-image: url('src/images/additional_image_bg.jpg');
+  background-size: cover;
+  background-position: center;
+  width: 100%;
+  min-height: 100vh;
+
+  h1 {
+    font-family: $font-main;
+    font-size: 62px;
+    color: $color-text;
+    text-align: center;
+    padding-top: 140px;
+    font-weight: 600;
+  }
+
+  .mainpage_buttons {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 80px;
+
+    .main_page_btn {
+      cursor: pointer;
+      text-transform: uppercase;
+      font-size: 20px;
+      background-color: $color-text-second;
+      border: none;
+      color: white;
+      border-radius: 15px;
+      padding: 20px 30px 20px 30px;
+    }
+  }
+}

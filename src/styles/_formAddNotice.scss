@@ -1,0 +1,65 @@
+@import "colors";
+@import "fonts";
+
+.form_add_notice {
+  background-image: url('src/images/additional_image_bg.jpg');
+  background-size: cover;
+  background-position: center;
+  width: 100%;
+  min-height: 100vh;
+  padding-bottom: 20px;
+
+  h1 {
+    font-family: $font-main;
+    font-size: 54px;
+    color: $color-text;
+    text-align: center;
+    padding-top: 40px;
+    font-weight: 600;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 600px;
+    margin: 0 auto;
+
+    h2, h3, h4 {
+      font-family: $font-main;
+      font-size: 24px;
+      color: $color-text;
+      margin-top: 20px;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      box-sizing: border-box;
+      border: 2px solid $color-text;
+      border-radius: 8px;
+      font-size: 16px;
+      outline: none;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    button {
+      cursor: pointer;
+      text-transform: uppercase;
+      font-size: 20px;
+      background-color: $color-text-second;
+      border: none;
+      color: white;
+      border-radius: 15px;
+      padding: 15px 30px;
+      margin-top: 20px;
+    }
+  }
+}

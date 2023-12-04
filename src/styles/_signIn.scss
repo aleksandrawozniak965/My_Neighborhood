@@ -1,0 +1,56 @@
+@import "fonts";
+
+.flex_container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+  .signin_container {
+    text-align: center;
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    height: 40vh;
+    font-family: $font-main;
+  }
+
+  h1 {
+    margin-bottom: 20px;
+  }
+
+.input_field {
+  width: 80%;
+}
+
+.signin_button {
+  background-color: #4caf50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.signin_paragraph {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 20px;
+
+  a {
+    color: #4caf50;
+    text-decoration: none;
+    font-weight: bold;
+    margin-left: 5px;
+    text-transform: uppercase;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+}
+
+

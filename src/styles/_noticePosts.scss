@@ -1,0 +1,39 @@
+@import "fonts";
+@import "colors";
+
+.notice_posts {
+  font-family: $font-main;
+  background-color: $color-text-second;
+  padding: 20px;
+
+  h2 {
+    text-align: center;
+    margin: 20px 0;
+    font-size: 62px;
+  }
+
+  .notice_list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+
+    .notice {
+      border: 1px solid #ccc;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease-in-out;
+      background-color: $color-text;
+
+      h3 {
+        color: #333;
+      }
+
+      &:hover {
+        transform: scale(1.05);
+      }
+    }
+  }
+}
+
+

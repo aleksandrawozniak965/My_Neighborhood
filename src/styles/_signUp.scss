@@ -1,0 +1,61 @@
+@import "fonts";
+
+.flex_container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  margin: 0;
+
+  .signup_container {
+    text-align: center;
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    height: 60vh;
+    font-family: $font-main;
+  }
+
+  h1 {
+    margin-bottom: 20px;
+  }
+}
+
+.input_field {
+  margin-bottom: 30px;
+  padding: 8px;
+  box-sizing: border-box;
+  outline: none;
+  font-family: $font-main;
+}
+
+.signup_button {
+  background-color: #4caf50;
+  color: white;
+  font-family: $font-main;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  width: 30%;
+}
+
+p {
+  margin-top: 20px;
+  font-size: 14px;
+  color: #666;
+}
+
+p a {
+  color: #4caf50;
+  text-decoration: none;
+  font-weight: bold;
+  margin-left: 5px;
+  text-transform: uppercase;
+}
+
+p a:hover {
+  text-decoration: underline;
+}
