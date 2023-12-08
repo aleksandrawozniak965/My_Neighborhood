@@ -4,39 +4,39 @@ import { faTrash, faPenToSquare } from '@fortawesome/free-solid-svg-icons'
 import supabase from "../utilis/supabase.js";
 
 
-export default function Comments({noticeId}) {
+export  default function Comments({noticeId}) {
     const [comment, setComment] = useState("");
     const [comments, setComments] = useState([]);
-    const [user, setUser] = useState("");
+    const [commentAuthor, setCommentAuthor] = useState("");
     const [editIndex, setEditIndex] = useState(null);
 
 
     useEffect(() => {
-        async function fetchUser  (){
+        async function getLoggedUser  (){
             const {data} = await supabase.auth.getSession();
             console.log(data);
 
             if (data) {
-                setUser(data.session.user.user_metadata.name);
-                console.log(user)
+                setCommentAuthor(data.session.user.user_metadata.name);
+                console.log(commentAuthor);
             }
         }
-        fetchUser();
+        getLoggedUser();
     }, []);
 
 
     useEffect(() => {
         async function fetchComments() {
-                const { data, error } = await supabase
-                    .from('notice_board')
-                    .select('comments_notice')
-                    .eq('id', noticeId);
+            const { data, error } = await supabase
+                .from('notice_board')
+                .select('comments_notice')
+                .eq('id', noticeId);
 
-                if (error) {
-                    console.error(error);
-                } else {
-                    setComments(data?.[0].comments_notice || []);
-                }}
+            if (error) {
+                console.error(error);
+            } else {
+                setComments(data?.[0].comments_notice || []);
+            }}
         fetchComments();
     }, [noticeId]);
 
@@ -48,7 +48,6 @@ export default function Comments({noticeId}) {
         }
 
         if (editIndex !== null) {
-            // Edytuj istniejący komentarz
             const updatedComments = [...comments];
             updatedComments[editIndex] = comment;
 
@@ -72,11 +71,12 @@ export default function Comments({noticeId}) {
                 setComments([]);
             }
         } else {
-            // Dodaj nowy komentarz
+
             const { data, error } = await supabase
                 .from("notice_board")
                 .update({
                     comments_notice: [...comments, comment],
+                    comment_author: commentAuthor
                 })
                 .eq("id", noticeId)
                 .select();
@@ -122,7 +122,6 @@ export default function Comments({noticeId}) {
         setEditIndex(index);
     }
 
-
     return (
         <>
             <div>
@@ -138,7 +137,7 @@ export default function Comments({noticeId}) {
             <div>
                 {comments.map((text, index) => (
                     <div key={index} className="comment_container">
-                        <p className="comment_text ">{user}:<span>{text}</span></p>
+                        <p className="comment_text ">{commentAuthor}:<span>{text}</span></p>
                         <div className="icons_container">
                             <FontAwesomeIcon icon={faTrash} onClick={() => handleDeleteComment(index)}/>
                             <FontAwesomeIcon icon={faPenToSquare} onClick={() => handleEditComment(index)}/>

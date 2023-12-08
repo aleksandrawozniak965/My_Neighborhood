@@ -56,11 +56,9 @@ export default function FormAddNotice () {
     useEffect(() => {
        async function fetchUser  (){
             const {data} = await supabase.auth.getSession();
-           console.log(data);
 
             if (data) {
                 setUser(data.session.user.user_metadata.name);
-                console.log(user)
             }
         }
 
@@ -161,7 +159,6 @@ export default function FormAddNotice () {
 
                 <Input label="Date" value={date} onChange={setDate} type="date"/>
                 <Input label="User" value={user} onChange={setUser}/>
-                <Input label="Upload Photo" type="file" accept="image.jpg, image.png"/>
 
                 <button>Add Notice</button>
             </form>
