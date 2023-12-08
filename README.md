@@ -8,7 +8,7 @@ Application contains 3 functionalities:
 - edit and delete notice 
 
 # demo
-netlify.app
+https://myneighbourhood.netlify.app/
 
 # technology
 - sass "^1.69.5"
