@@ -2,7 +2,7 @@
 @import "colors";
 
 body {
-  max-width: 1600px;
+  max-width: 100%;
   height: 100vh;
   margin: 0 auto;
 }
@@ -28,7 +28,6 @@ body {
 
 .buttons {
   margin-left: 15px;
-
 
   button {
     padding: 10px 30px 10px 30px;
