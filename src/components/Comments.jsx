@@ -7,141 +7,177 @@ import supabase from "../utilis/supabase.js";
 export  default function Comments({noticeId}) {
     const [comment, setComment] = useState("");
     const [comments, setComments] = useState([]);
-    const [commentAuthor, setCommentAuthor] = useState("");
+    const [user, setUser] = useState(null);
     const [editIndex, setEditIndex] = useState(null);
-
+    const [editedComment, setEditedComment] = useState("");
 
     useEffect(() => {
-        async function getLoggedUser  (){
-            const {data} = await supabase.auth.getSession();
-            console.log(data);
+        const getSessionData = async () => {
+            try {
+                const { data, error } = await supabase.auth.getSession();
+                if (error) {
+                    console.error(error);
+                    return;
+                }
 
-            if (data) {
-                setCommentAuthor(data.session.user.user_metadata.name);
-                console.log(commentAuthor);
+                if (data) {
+                    setUser(data.session.user.user_metadata.name);
+                }
+            } catch (error) {
+                console.error(error);
             }
-        }
-        getLoggedUser();
+        };
+
+        getSessionData();
     }, []);
 
-
     useEffect(() => {
-        async function fetchComments() {
-            const { data, error } = await supabase
-                .from('notice_board')
-                .select('comments_notice')
-                .eq('id', noticeId);
+        async function fetchComments () {
+            const {data, error} = await supabase
+                .from('comments_table')
+                .select('id, comment_text, comment_author')
+                .eq('comment_notice', noticeId)
 
-            if (error) {
+            if(error) {
                 console.error(error);
-            } else {
-                setComments(data?.[0].comments_notice || []);
-            }}
+            }
+
+            const transformedComments = data.map(comment => ({
+                id: comment.id,
+                text: comment.comment_text,
+                author: comment.comment_author
+            }));
+
+            if (data) {
+                setComments(transformedComments);
+            }
+        }
         fetchComments();
     }, [noticeId]);
 
 
-    async function handleAddComment() {
+    async function handleAddComment () {
         if (!comment.trim()) {
             alert("Komentarz nie może być pusty.");
-            return;
         }
 
-        if (editIndex !== null) {
-            const updatedComments = [...comments];
-            updatedComments[editIndex] = comment;
+        const {error } = await supabase
+            .from('comments_table')
+            .insert([
+                {
+                    comment_text: comment,
+                    comment_author: user,
+                    comment_notice: noticeId,
+                },
+            ]);
 
-            const { data, error } = await supabase
-                .from("notice_board")
-                .update({
-                    comments_notice: updatedComments,
-                })
-                .eq("id", noticeId)
-                .select();
+        if (error) {
+            console.error(error)
+        }
 
-            if (error) {
-                console.error(error);
-            }
+        setComments((prevComments) => [
+            ...prevComments,
+            {
+                text: comment,
+                author: user,
+            },
+        ]);
 
-            if (data) {
-                setComments(data[0]?.comments_notice || []);
-                setEditIndex(null);
-                setComment('');
-            } else {
-                setComments([]);
-            }
+        setComment('');
+    }
+
+    function handleEditComment(id) {
+        const commentToEdit = comments.find(comment => comment.id === id);
+
+        if (commentToEdit && user === commentToEdit.author) {
+            setEditIndex(id);
+            setEditedComment(commentToEdit.text);
         } else {
-
-            const { data, error } = await supabase
-                .from("notice_board")
-                .update({
-                    comments_notice: [...comments, comment],
-                    comment_author: commentAuthor
-                })
-                .eq("id", noticeId)
-                .select();
-
-            if (error) {
-                console.error(error);
-            }
-
-            if (data) {
-                setComments(data[0]?.comments_notice || []);
-                setComment("");
-            } else {
-                setComments([]);
-            }
+            alert("Nie masz uprawnień do edycji tego komentarza.");
         }
     }
 
-    async function handleDeleteComment(index) {
-        const updatedComments = [...comments];
-        updatedComments.splice(index, 1);
-
-        const { data, error } = await supabase
-            .from("notice_board")
-            .update({
-                comments_notice: updatedComments,
-            })
-            .eq("id", noticeId)
-            .select();
+    async function handleSaveEdit() {
+        const { error } = await supabase
+            .from('comments_table')
+            .update({ comment_text: editedComment })
+            .eq('id', editIndex);
 
         if (error) {
             console.error(error);
         }
 
-        if (data) {
-            setComments(data[0]?.comments_notice || []);
-        } else {
-            setComments([]);
-        }
+        setComments(prevComments =>
+            prevComments.map(comment =>
+                comment.id === editIndex ? { ...comment, text: editedComment } : comment
+            )
+        );
+
+        setEditIndex(null);
+        setEditedComment("");
     }
 
-    function handleEditComment(index) {
-        setComment(comments[index]);
-        setEditIndex(index);
+    function handleCancelEdit() {
+        setEditIndex(null);
+        setEditedComment("");
+    }
+
+
+    async function handleDeleteComment(id) {
+        const commentToDelete = comments.find(comment => comment.id === id);
+
+        if (commentToDelete && user === commentToDelete.author) {
+            const { error } = await supabase
+                .from('comments_table')
+                .delete()
+                .eq('id', id);
+
+            if (error) {
+                console.error(error);
+            }
+
+            setComments(prevComments => prevComments.filter(comment => comment.id !== id));
+        } else {
+            alert("Nie masz uprawnień do usunięcia tego komentarza.");
+        }
     }
 
     return (
         <>
             <div>
-        <textarea
-            placeholder="Add a comment..."
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-        />
+                <textarea
+                    placeholder="Add a comment..."
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                />
                 <button className="btn_comments" onClick={handleAddComment}>
                     Add Comment
                 </button>
             </div>
             <div>
-                {comments.map((text, index) => (
+                {comments.map(({ id, text, author }, index) => (
                     <div key={index} className="comment_container">
-                        <p className="comment_text ">{commentAuthor}:<span>{text}</span></p>
-                        <div className="icons_container">
-                            <FontAwesomeIcon icon={faTrash} onClick={() => handleDeleteComment(index)}/>
-                            <FontAwesomeIcon icon={faPenToSquare} onClick={() => handleEditComment(index)}/>
-                        </div>
+                        {editIndex === id ? (
+                            <div className="edit_container">
+                                <input
+                                    type="text"
+                                    value={editedComment}
+                                    onChange={(e) => setEditedComment(e.target.value)}
+                                />
+                                <div className="edit_btn_container">
+                                <button className="btn_edit" onClick={handleSaveEdit}>Save</button>
+                                <button className="btn_edit" onClick={handleCancelEdit}>Cancel</button>
+                                </div>
+                            </div>
+                        ) : (
+                            <>
+                                <p className="comment_text ">{author}: <span>{text}</span></p>
+                                <div className="icons_container">
+                                    <FontAwesomeIcon icon={faTrash} onClick={() => handleDeleteComment(id)} />
+                                    <FontAwesomeIcon icon={faPenToSquare} onClick={() => handleEditComment(id)} />
+                                </div>
+                            </>
+                        )}
                     </div>
                 ))}
             </div>

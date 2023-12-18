@@ -27,6 +27,10 @@ export default function FormAddNotice () {
             }
 
             setCategories(data);
+
+            if (data.length > 0) {
+                setSelectedCategory(data[0].id.toString());
+            }
         }
         fetchCategories();
     }, []);

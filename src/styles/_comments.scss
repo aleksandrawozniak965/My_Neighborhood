@@ -23,6 +23,7 @@ textarea {
   border-radius: 8px;
   cursor: pointer;
   font-size: 14px;
+  margin-bottom: 12px;
 }
 
 .comment_container {
@@ -35,7 +36,7 @@ textarea {
     margin-top: 8px;
 
     span {
-      margin-left: 8px;
+      margin-left: 2px;
     }
   }
 
@@ -45,3 +46,23 @@ textarea {
     cursor: pointer;
   }
 }
+
+.edit_container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+
+  input {
+  @extend textarea;
+    height: 30px;
+  }
+
+  .btn_edit {
+    @extend .btn_comments;
+    padding: 5px 10px;
+    margin-right: 8px;
+  }
+}
+
+

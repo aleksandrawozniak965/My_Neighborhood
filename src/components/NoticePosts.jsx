@@ -8,7 +8,9 @@ export default function NoticePosts() {
 
     useEffect(() => {
         async function fetchNotices() {
-            const { data, error } = await supabase.from('notice_board').select('*');
+            const { data, error } = await supabase
+                .from('notice_board')
+                .select('*');
 
             if (error) {
                 console.error(error);
@@ -44,27 +46,36 @@ export default function NoticePosts() {
 
 
 function CategoryDisplay({ categoryId }) {
-    const [categoryName, setCategoryName] = useState('');
+    const [categoryName, setCategoryName] = useState([]);
 
     useEffect(() => {
         async function fetchCategoryName() {
             const { data, error } = await supabase
                 .from('categories_notice_board')
-                .select('name_category')
-                .eq('id', categoryId)
-                .single();
+                .select('id, name_category')
+                .eq('id', categoryId);
 
             if (error) {
                 console.error(error);
+                return;
             }
 
-            setCategoryName(data.name_category);
+            const transformedCategories = data.map(category => ({
+                id: category.id,
+                name: category.name_category
+            }));
+
+            setCategoryName(transformedCategories);
         }
 
         fetchCategoryName();
     }, [categoryId]);
 
-    return <p>Category: {categoryName}</p>;
+    return (
+        <p>
+            Category: {categoryName.map(category => category.name).join(', ')}
+        </p>
+    );
 }
 
 
@@ -75,15 +86,22 @@ function TransactionDisplay({ transactionId }) {
         async function fetchTransactionName() {
             const { data, error } = await supabase
                 .from('transaction_types_notice_board')
-                .select('name')
-                .eq('id', transactionId)
-                .single();
+                .select('id, name')
+                .eq('id', transactionId);
 
             if (error) {
                 console.error(error);
+                return;
             }
 
-            setTransactionName(data.name);
+            const transformedTransactions = data.map(transaction => ({
+                id: transaction.id,
+                name: transaction.name
+            }));
+
+            if (transformedTransactions.length > 0) {
+                setTransactionName(transformedTransactions[0].name);
+            }
         }
 
         fetchTransactionName();
